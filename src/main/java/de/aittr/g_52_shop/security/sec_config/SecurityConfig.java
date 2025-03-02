@@ -1,5 +1,6 @@
 package de.aittr.g_52_shop.security.sec_config;
 
+import de.aittr.g_52_shop.security.sec_filter.TokenFilter;
 import io.swagger.v3.oas.models.PathItem;
 
 import org.springframework.context.annotation.Bean;
@@ -13,11 +14,18 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
+    //Интегрируем наш фильтр в цепочку фильтров
+    private final TokenFilter filter;
+
+    public SecurityConfig(TokenFilter filter) {
+        this.filter = filter;
+    }
 
     @Bean
     public BCryptPasswordEncoder encoder() {
@@ -35,8 +43,8 @@ public class SecurityConfig {
                 .sessionManagement(x -> x
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-                // Включаем базовую авторизацию (при помощи логина и пароля)
-                .httpBasic(Customizer.withDefaults())
+                // Выключаем базовую авторизацию (при помощи логина и пароля)
+                .httpBasic(AbstractHttpConfigurer::disable)
                 // При помощи этого метода мы конфигурируем доступ к разному функционалу
                 // приложения для разных ролей пользователей
                 .authorizeHttpRequests(x -> x
@@ -44,6 +52,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/products/").hasAnyRole("ADMIN", "USER")
                         .requestMatchers(HttpMethod.POST, "/products").hasRole("ADMIN")
                         .anyRequest().authenticated()
-                ).build();
+                )
+                .addFilterAfter(filter, UsernamePasswordAuthenticationFilter.class)
+                .build();
     }
 }
