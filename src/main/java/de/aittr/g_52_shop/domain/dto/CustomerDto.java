@@ -5,6 +5,7 @@ import de.aittr.g_52_shop.domain.entity.Customer;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 
+import java.util.List;
 import java.util.Objects;
 
 @Schema(description = "Class that describes Customer DTO")
@@ -20,6 +21,15 @@ public class CustomerDto {
     @Schema(description = "Customer name", example = "Dmytro Luts")
     private String name;
 
+    private CartDto cart;
+
+    public CartDto getCart() {
+        return cart;
+    }
+
+    public void setCart(CartDto cart) {
+        this.cart = cart;
+    }
 
     public Long getId() {
         return id;
@@ -41,17 +51,17 @@ public class CustomerDto {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         CustomerDto that = (CustomerDto) o;
-        return Objects.equals(id, that.id) && Objects.equals(name, that.name);
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(cart, that.cart);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name);
+        return Objects.hash(id, name, cart);
     }
 
     @Override
     public String toString() {
-        return String.format("Покупатель: ИД - %d, имя - %s, активен - %s.",
+        return String.format("Покупатель: ИД - %d, имя - %s",
                 id, name);
     }
 

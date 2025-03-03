@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <changeSet id="add-tag-0.4.0" author="Dmytro">
+        <tagDatabase tag="v.0.4.0"/>
+    </changeSet>
+
+    <include file="create-table-cart.xml" relativeToChangelogFile="true"/>
+    <include file="create-table-to-cart-product.xml" relativeToChangelogFile="true"/>
+    <include file="add-foreign-key-cart-to-customer.xml" relativeToChangelogFile="true"/>
+    <include file="add-foreign-keys-to-cart-product.xml" relativeToChangelogFile="true"/>
+
+</databaseChangeLog>

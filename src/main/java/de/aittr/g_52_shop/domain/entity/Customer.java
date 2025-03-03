@@ -16,8 +16,20 @@ public class Customer {
     @Column (name = "active")
     private boolean active;
 
-    public Customer() {
+    // Связь один-к-одному со стороны той таблицы, в которой нет
+    // колонки, которая ссылается на другую таблицу
+    @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL)
+    private Cart cart;
 
+    public Cart getCart() {
+        return cart;
+    }
+
+    public void setCart(Cart cart) {
+        this.cart = cart;
+    }
+
+    public Customer() {
     }
 
     public Long getId() {
