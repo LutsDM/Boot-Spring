@@ -5,6 +5,8 @@ import de.aittr.g_52_shop.domain.entity.Product;
 import de.aittr.g_52_shop.repository.ProductRepository;
 import de.aittr.g_52_shop.service.interfaces.ProductService;
 import de.aittr.g_52_shop.service.mapping.ProductMappingService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -23,6 +25,8 @@ public class ProductServiceImpl implements ProductService {
     // Этот сервис мы будем вызывать, когда нам понадобится
     // сконвертировать Продукт в ДТО и наоборот
     private final ProductMappingService mappingService;
+
+    private final Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
 
     /*
     Когда Спринг будет создавать объект сервиса продуктов, он вызовет
@@ -46,6 +50,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<ProductDto> getAllActiveProducts() {
+
         return repository.findAll()
                 .stream()
                 .filter(Product::isActive)

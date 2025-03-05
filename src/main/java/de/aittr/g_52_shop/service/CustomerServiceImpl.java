@@ -7,6 +7,7 @@ import de.aittr.g_52_shop.repository.CustomerRepository;
 import de.aittr.g_52_shop.service.interfaces.CustomerService;
 import de.aittr.g_52_shop.service.mapping.CustomerMappingService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -55,10 +56,14 @@ public class CustomerServiceImpl implements CustomerService {
     public void deleteById(Long customerId) {
 
     }
-
+    @Transactional
     @Override
     public void deleteByName(String name) {
-
+        List<Customer> customers = repository.findByName(name);
+        customers.forEach(customer -> {
+            customer.setActive(false); // Мягкое удаление
+            repository.save(customer);
+        });
     }
 
     @Override

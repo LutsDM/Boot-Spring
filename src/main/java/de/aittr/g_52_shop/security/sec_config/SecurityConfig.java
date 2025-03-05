@@ -52,7 +52,12 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/products/").hasAnyRole("ADMIN", "USER")
                         .requestMatchers(HttpMethod.POST, "/products").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/refresh").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/customer/all").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/customer").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/customer/by-name/{name}").hasRole("ADMIN")
                         .anyRequest().authenticated()
+
+//                        .anyRequest().permitAll()
                 )
                 .addFilterAfter(filter, UsernamePasswordAuthenticationFilter.class)
                 .build();

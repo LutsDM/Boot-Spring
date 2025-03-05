@@ -1,10 +1,12 @@
 package de.aittr.g_52_shop.domain.entity;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.util.Objects;
 @Entity
 @Table(name = "customer")
+@DynamicUpdate
 public class Customer {
 
     @Id
