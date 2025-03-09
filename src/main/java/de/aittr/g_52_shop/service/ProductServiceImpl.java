@@ -2,6 +2,8 @@ package de.aittr.g_52_shop.service;
 
 import de.aittr.g_52_shop.domain.dto.ProductDto;
 import de.aittr.g_52_shop.domain.entity.Product;
+import de.aittr.g_52_shop.exception_handling.exceptions.ProductNotFoundException;
+import de.aittr.g_52_shop.exception_handling.exceptions.ProductValidationException;
 import de.aittr.g_52_shop.repository.ProductRepository;
 import de.aittr.g_52_shop.service.interfaces.ProductService;
 import de.aittr.g_52_shop.service.mapping.ProductMappingService;
@@ -26,6 +28,7 @@ public class ProductServiceImpl implements ProductService {
     // сконвертировать Продукт в ДТО и наоборот
     private final ProductMappingService mappingService;
 
+    // Это объект логгера, при помощи него осуществляется логирование.
     private final Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
 
     /*
@@ -43,13 +46,23 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDto save(ProductDto dto) {
-        Product entity = mappingService.mapDtoToEntity(dto);
-        entity = repository.save(entity);
-        return mappingService.mapEntityToDto(entity);
+        try {
+            Product entity = mappingService.mapDtoToEntity(dto);
+            entity = repository.save(entity);
+            return mappingService.mapEntityToDto(entity);
+        } catch (Exception e) {
+            throw new ProductValidationException(e);
+        }
     }
 
     @Override
     public List<ProductDto> getAllActiveProducts() {
+
+        // При помощи разных методов объекта логгера мы можем фиксировать
+        // события, происходящие в программе на разные уровни
+//        logger.info("Request for all products received");
+//        logger.warn("Request for all products received");
+//        logger.error("Request for all products received");
 
         return repository.findAll()
                 .stream()
@@ -60,13 +73,17 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDto getById(Long id) {
-        Product product = repository.findById(id).orElse(null);
+//        Product product = repository.findById(id).orElse(null);
+//
+//        if (product == null || !product.isActive()) {
+//            throw new ProductNotFoundException(id);
+//        }
+//
+//        return mappingService.mapEntityToDto(product);
 
-        if (product == null || !product.isActive()) {
-            return null;
-        }
-
-        return mappingService.mapEntityToDto(product);
+        return mappingService.mapEntityToDto(repository.findById(id)
+                .filter(Product::isActive)
+                .orElseThrow(() -> new ProductNotFoundException(id)));
     }
 
     @Override

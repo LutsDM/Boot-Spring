@@ -1,6 +1,8 @@
 package de.aittr.g_52_shop.controller;
 
 import de.aittr.g_52_shop.domain.dto.ProductDto;
+import de.aittr.g_52_shop.exception_handling.Response;
+import de.aittr.g_52_shop.exception_handling.exceptions.ProductNotFoundException;
 import de.aittr.g_52_shop.service.interfaces.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -153,4 +155,31 @@ public class ProductController {
     public BigDecimal getProductAveragePrice() {
         return service.getAllActiveProductsAveragePrice();
     }
+
+    /*
+    Этот метод является обработчиком конкретных исключений
+    типа ProductNotFoundException.
+    На это указывает аннотация @ExceptionHandler.
+    Как это работает:
+    1. Эксепшен выбрасывается сервисом.
+    2. Т.к. эксепшен в сервисе не обрабатывается, он пробрасывается
+       вызывающему коду - то есть контроллеру.
+    3. Т.к. в контроллере есть обработчик этого эксепшена, и Спринг это видит,
+       благодаря аннотации, Спринг перехватывает этот эксепшен.
+    4. Спринг вызывает сам наш метод handleException, передавая в параметр e
+       перехваченный эксепшен.
+     */
+
+    /*
+    1 способ обработки ошибок
+    ПЛЮС -  мы точечно настраиваем обработчик ошибок именно для данного контроллера,
+            если нам требуется разная логика обработки ошибок для разных контроллеров
+    МИНУС - если нам не требуется разная логика обработки ошибок для разных контроллеров,
+            то при таком подходе нам придётся во всех контроллерах создавать такие
+            одинаковые обработчики
+     */
+//    @ExceptionHandler(ProductNotFoundException.class)
+//    public Response handleException(ProductNotFoundException e) {
+//        return new Response(e.getMessage());
+//    }
 }

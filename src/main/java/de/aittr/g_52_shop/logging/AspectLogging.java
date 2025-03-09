@@ -1,10 +1,14 @@
 package de.aittr.g_52_shop.logging;
 
+import de.aittr.g_52_shop.domain.dto.ProductDto;
+import de.aittr.g_52_shop.service.ProductServiceImpl;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
 
 // Аннотация @Aspect определяет, что этот класс является аспектом,
 // то есть классом, который содержит адвайсы.
@@ -57,4 +61,22 @@ public class AspectLogging {
     public void afterThrowingExceptionWhileGettingProduct(Exception e) {
         logger.warn("Method getById of the ProductServiceImpl threw an exception: {}", e.getMessage());
     }
+
+    @Pointcut("execution(* de.aittr.g_52_shop.service.ProductServiceImpl.*(..))")
+    public void productServiceMethods() {}
+
+    @Before("productServiceMethods()")
+    public void logBeforeMethodExecution(JoinPoint joinPoint) {
+        logger.info("Method called: {} with arguments: {}",
+                joinPoint.getSignature(), Arrays.toString(joinPoint.getArgs()));
+    }
+
+    @After("productServiceMethods()")
+    public void logAfterMethodExecution(JoinPoint joinPoint) {
+        logger.info("Method {} of the class ProductServiceImpl finished its work", joinPoint.getSignature());
+    }
 }
+
+
+
+
