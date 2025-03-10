@@ -3,6 +3,8 @@ package de.aittr.g_52_shop.service;
 import de.aittr.g_52_shop.domain.dto.CustomerDto;
 import de.aittr.g_52_shop.domain.entity.Customer;
 import de.aittr.g_52_shop.domain.entity.Product;
+import de.aittr.g_52_shop.exception_handling.exceptions.CustomerNotFoundException;
+import de.aittr.g_52_shop.exception_handling.exceptions.CustomerValidationException;
 import de.aittr.g_52_shop.repository.CustomerRepository;
 import de.aittr.g_52_shop.service.interfaces.CustomerService;
 import de.aittr.g_52_shop.service.mapping.CustomerMappingService;
@@ -24,9 +26,13 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public CustomerDto save(CustomerDto dto) {
-        Customer entity = mappingService.mapDtoToEntity(dto);
-        entity = repository.save(entity);
-        return mappingService.mapEntityToDto(entity);
+        try {
+            Customer entity = mappingService.mapDtoToEntity(dto);
+            entity = repository.save(entity);
+            return mappingService.mapEntityToDto(entity);
+        } catch (Exception e) {
+            throw new CustomerValidationException(e);
+        }
     }
 
     @Override
@@ -40,13 +46,17 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public CustomerDto getById(Long customerId) {
-        Customer customer = repository.findById(customerId).orElse(null);
-
-        if (customer == null || !customer.isActive()){
-            return null;
-        }
-        return mappingService.mapEntityToDto(customer);
+//        Customer customer = repository.findById(customerId).orElse(null);
+//
+//        if (customer == null || !customer.isActive()){
+//            return null;
+//        }
+//        return mappingService.mapEntityToDto(customer);
+        return mappingService.mapEntityToDto(repository.findById(customerId)
+                .filter(Customer::isActive)
+                .orElseThrow(() -> new CustomerNotFoundException(customerId)));
     }
+
     @Override
     public void update(CustomerDto customer) {
 

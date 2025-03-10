@@ -1,6 +1,9 @@
 package de.aittr.g_52_shop.domain.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.util.Objects;
@@ -13,8 +16,16 @@ public class Customer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
+
     @Column(name = "name")
+    @NotNull
+    @NotBlank
+    @Pattern(
+            regexp = "^[A-ZА-ЯЁ][a-zа-яё]+(?:[-' ][A-ZА-ЯЁ][a-zа-яё]+)*$",
+            message = "Error: The name must start with a capital letter, contain only letters, and may include - or ' between words."
+    )
     private String name;
+
     @Column (name = "active")
     private boolean active;
 

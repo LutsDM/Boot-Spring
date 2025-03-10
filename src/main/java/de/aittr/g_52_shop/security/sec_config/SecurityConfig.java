@@ -55,6 +55,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/customer/all").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/customer").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/customer/by-name/{name}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/register").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/register/{code}").permitAll()
                         .anyRequest().authenticated()
 
 //                        .anyRequest().permitAll()

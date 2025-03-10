@@ -7,6 +7,7 @@ import de.aittr.g_52_shop.exception_handling.exceptions.ProductValidationExcepti
 import de.aittr.g_52_shop.repository.ProductRepository;
 import de.aittr.g_52_shop.service.interfaces.ProductService;
 import de.aittr.g_52_shop.service.mapping.ProductMappingService;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -86,9 +87,19 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() -> new ProductNotFoundException(id)));
     }
 
+    // Аннотация @Transactional служит для того, чтобы транзакция,
+    // открытая в БД, действовала на протяжении всей работы метода.
+    // Таким образом мы сохраняем наш продукт в состоянии managed,
+    // и все изменения, которые мы вносим в этот Джава-объект,
+    // автоматически попадают в БД согласно концепции ORM.
     @Override
+    @Transactional
     public void update(ProductDto product) {
-
+        Long id = product.getId();
+        Product existedProduct = repository.findById(id)
+                .filter(Product::isActive)
+                .orElseThrow(() -> new ProductNotFoundException(id));
+        existedProduct.setPrice(product.getPrice());
     }
 
     @Override
